@@ -1,0 +1,18 @@
+type: object
+properties:
+  moved:
+    type: object
+    properties:
+      root:
+        type: string
+        pattern: element
+    additionalProperties: false
+    required:
+      - root
+  some_value:
+    type: string
+    pattern: Hello World
+required:
+  - moved
+  - some_value
+additionalProperties: false

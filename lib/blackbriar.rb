@@ -5,6 +5,7 @@ require "json_schema"
 require "jsonpath"
 require "blackbriar/node"
 require "blackbriar/value_provider"
+require "blackbriar/map_extract"
 require "sleepers"
 
 module Blackbriar
