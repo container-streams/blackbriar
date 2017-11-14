@@ -10,7 +10,7 @@
 module Blackbriar
   class ValueProvider
     def initialize(data)
-      @data = data
+      @data = data.deep_stringify_keys
     end
 
     def resolve(arg)

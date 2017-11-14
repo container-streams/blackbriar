@@ -4,7 +4,10 @@ module Blackbriar
   RSpec.describe Node, type: :model do
     let(:map) do
       {
-        test: "json_path:$..arbitrary.value"
+        moved: {
+          root: "json_path:$.root"
+        },
+        some_value: "json_path:$.some.arbitrary.value"
       }
     end
 
@@ -14,13 +17,21 @@ module Blackbriar
           arbitrary: {
             value: "Hello World"
           }
+        },
+        root: "element",
+        nested: {
+          array:[
+            "value One",
+            {value: "two"},
+            {value: "three", array: [1,2,3,4,5]}
+          ]
         }
       }
     end
 
     let(:provider) { ValueProvider.new(json) }
 
-    let(:node) { described_class.new(map["weigh"], provider ) }
+    let(:node) { described_class.new(map["moved"], provider ) }
 
     subject { node }
 
@@ -38,22 +49,15 @@ module Blackbriar
 
         it { is_expected.to be_kind_of Hash }
 
-        it 'has the right output' do
-          is_expected.to have_keys ["weigh", "sub_types"]
+        describe "moved" do
+          subject { output[:moved] }
+
+          it { is_expected.to eq root: "element" }
         end
 
-        it 'matches the right schema' do
-          is_expected.to match_yaml_schema 'payload/base_v1.0'
-        end
-
-        describe 'weigh' do
-          subject { output["weigh"] }
-          it { is_expected.to match_yaml_schema 'payload/weigh_v1.0' }
-        end
-
-        describe 'sub_types' do
-          subject { output["sub_types"] }
-          it { is_expected.to match_yaml_schema "payload/sub_types_v1.0" }
+        describe "some_value" do
+          subject { output[:some_value] }
+          it { is_expected.to eq "Hello World" }
         end
       end
     end
