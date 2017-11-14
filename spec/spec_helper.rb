@@ -1,5 +1,7 @@
 require "bundler/setup"
 require "blackbriar"
+require "sleepers/rspec/matchers"
+require "blackbriar/rspec/matchers"
 
 RSpec.configure do |config|
   # Enable flags like --only-failures and --next-failure
