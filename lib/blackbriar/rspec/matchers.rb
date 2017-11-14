@@ -48,7 +48,7 @@ RSpec::Matchers.define :match_json_schema do |schema|
       # Parse and expand the schema definition
       @schema = JsonSchema.parse!(YAML.load(File.read(schema_path)))
     elsif schema.kind_of? Hash
-      @schema = JsonSchema.parse!(schema)
+      @schema = JsonSchema.parse!(schema.deep_stringify_keys)
     end
 
     @schema.expand_references!
@@ -67,9 +67,42 @@ RSpec::Matchers.define :match_json_schema do |schema|
   end
 
   failure_message do
-    binding.pry
     @errors
   end
 end
 
 RSpec::Matchers.define_negated_matcher :not_match_json_schema, :match_json_schema
+
+RSpec::Matchers.define :have_errors_at do |map|
+  error_schema = {
+    type: "object",
+    properties: {
+      errors: {
+        type: "array"
+      }
+    },
+    required: ["errors"]
+  }
+
+  define_method :matches? do |actual|
+    value = Blackbriar::ValueProvider.new(actual).resolve(map)
+    expect(value).to match_json_schema error_schema
+  end
+end
+
+RSpec::Matchers.define :not_have_errors_at do |map|
+  error_schema = {
+    type: "object",
+    properties: {
+      errors: {
+        type: "array"
+      }
+    },
+    required: ["errors"]
+  }
+
+  define_method :matches? do |actual|
+    value = Blackbriar::ValueProvider.new(actual).resolve(map)
+    expect(value).to not_match_json_schema error_schema
+  end
+end

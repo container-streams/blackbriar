@@ -26,9 +26,7 @@ module Blackbriar
 
       context "when the value is at the root" do
         let(:path) { 'json_path:$.root' }
-        it 'debug' do
-          puts subject
-        end
+
         it { is_expected.to eq json["root"] }
       end
 

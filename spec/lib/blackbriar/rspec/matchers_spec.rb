@@ -65,4 +65,30 @@ RSpec.describe "json schema matchers", type: :model do
       end
     end
   end
+
+  describe 'have_errors_at' do
+    let(:data) do
+      {
+        some: {
+          arbitrary: {
+            json: {
+              errors: [
+                {id: "some error"}
+              ]
+            }
+          }
+        },
+        errors: [
+          {another: 'kind of error'}
+        ]
+      }
+    end
+
+    subject { data }
+
+    it { is_expected.to have_errors_at "json_path:$.some.arbitrary.json" }
+    it { is_expected.to not_have_errors_at "json_path:$.some.arbitrary" }
+    it { is_expected.to have_errors_at "json_path:$." }
+    it { is_expected.to not_have_errors_at "json_path:$.some.arbitrary.json.errors[0]" }
+  end
 end
