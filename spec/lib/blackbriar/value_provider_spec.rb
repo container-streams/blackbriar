@@ -28,6 +28,7 @@ module Blackbriar
         let(:path) { 'json_path:$.root' }
 
         it { is_expected.to eq json["root"] }
+        it { is_expected.to eq "value" }
       end
 
       context "when the value is nested" do

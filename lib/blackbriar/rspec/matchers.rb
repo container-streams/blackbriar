@@ -29,7 +29,18 @@ RSpec::Matchers.define :match_yaml_schema do |schema|
   end
 
   failure_message do
-    @errors
+    %Q{
+      Expected:
+
+      #{actual.to_s.truncate(250, omission: "...")},
+
+      to match schema:
+
+      #{schema}
+
+      Errors:
+      #{@errors}
+    }
   end
 end
 
@@ -67,7 +78,18 @@ RSpec::Matchers.define :match_json_schema do |schema|
   end
 
   failure_message do
-    @errors
+    %Q{
+      Expected:
+
+      #{actual.to_s.truncate(250, omission: "...")},
+
+      to match schema:
+
+      #{schema}
+
+      Errors:
+      #{@errors}
+    }
   end
 end
 
@@ -104,5 +126,16 @@ RSpec::Matchers.define :not_have_errors_at do |map|
   define_method :matches? do |actual|
     value = Blackbriar::ValueProvider.new(actual).resolve(map)
     expect(value).to not_match_json_schema error_schema
+  end
+end
+
+RSpec::Matchers.define :have_value_at do |json_path|
+  match do |actual|
+    expected_value = json_path_value(json_path)
+    expected_value.present?
+  end
+
+  define_method :json_path_value do |json_path|
+    @value = Blackbriar::ValueProvider.new(actual).resolve(json_path)
   end
 end
